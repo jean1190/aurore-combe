@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurore Combe</title>
+
+    <!-- Import pour garantir l'aspect ciselé de la pierre -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --stone-dark: #141312;
+            --stone-mid: #1f1e1d;
+            --stone-light: #2c2a28;
+            --text-color: #e6e1dc;
+            --breath-duration: 12s;
+            /* Plus lent = plus massif */
+        }
+
+        * {
+            box-sizing: border-box;
+            /* Critical fix for height calculation */
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            /* Lock scroll */
+            position: fixed;
+            /* Force lock on mobile */
+            background-color: var(--stone-dark);
+            color: var(--text-color);
+            font-family: "Playfair Display", "Didot", "Times New Roman", serif;
+        }
+
+        /* Fond organique vivant */
+        .background {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            /* Gradient enrichi pour profondeur */
+            background: radial-gradient(circle at center,
+                    var(--stone-light) 0%,
+                    var(--stone-mid) 40%,
+                    var(--stone-dark) 80%,
+                    #000000 100%);
+            opacity: 0.8;
+            animation: breathe var(--breath-duration) ease-in-out infinite alternate;
+            z-index: 0;
+            will-change: transform, opacity;
+        }
+
+        /* Grain de pierre (Texture) */
+        .noise {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+            mix-blend-mode: overlay;
+        }
+
+        .container {
+            position: relative;
+            height: 100vh;
+            /* Fallback */
+            height: 100dvh;
+            /* Mobile viewport fix */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 12vh;
+            z-index: 2;
+        }
+
+        #racine {
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: riseUp 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s forwards;
+            padding: 0 20px;
+        }
+
+        p {
+            font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+            font-weight: 400;
+            font-style: italic;
+            letter-spacing: 0.03em;
+            line-height: 1.5;
+            margin: 0;
+            color: var(--text-color);
+            background: linear-gradient(to bottom, #ffffff 10%, #8a8885 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Animations */
+        @keyframes breathe {
+            0% {
+                transform: scale(1);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1.08);
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes riseUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="background"></div>
+    <div class="noise"></div>
+
+    <div class="container">
+        <div id="racine">
+            <p>Toute lumière prend racine dans la pierre.</p>
+        </div>
+    </div>
+
+    <script>
+        const bg = document.querySelector('.background');
+        const text = document.getElementById('racine');
+
+        function handleMove(x, y) {
+            // Normalisation -0.5 à 0.5
+            const normX = (x / window.innerWidth) - 0.5;
+            const normY = (y / window.innerHeight) - 0.5;
+
+            // Le texte bouge (Parallax avant)
+            text.style.transform = `translate(${normX * -15}px, ${normY * -15}px)`;
+
+            // Le background bouge (Parallax arrière)
+            bg.style.marginLeft = `${normX * 30}px`;
+            bg.style.marginTop = `${normY * 30}px`;
+        }
+
+        // Souris
+        document.addEventListener('mousemove', (e) => {
+            handleMove(e.clientX, e.clientY);
+        });
+
+        // Touch (Mobile)
+        document.addEventListener('touchmove', (e) => {
+            e.preventDefault(); // Prevent scroll strictly
+            const touch = e.touches[0];
+            handleMove(touch.clientX, touch.clientY);
+        }, { passive: false }); // Passive false required for preventDefault
+    </script>
+
+</body>
+
+</html>
