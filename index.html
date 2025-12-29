@@ -146,7 +146,7 @@
             }
         }
 
-        /* Mobile : plus de respiration */
+        /* Mobile : respiration accentuée */
         @media (max-width: 600px) {
             .container {
                 justify-content: center;
@@ -161,6 +161,28 @@
                 font-size: clamp(1.2rem, 5vw, 1.6rem);
                 line-height: 1.7;
             }
+
+            .breath {
+                animation: breathe-mobile 6s ease-in-out infinite alternate;
+            }
+
+            .breath::after {
+                background: radial-gradient(circle,
+                    rgba(130, 115, 95, 0.9) 0%,
+                    rgba(80, 70, 55, 0.6) 35%,
+                    transparent 65%);
+                animation: glow-mobile 6s ease-in-out infinite alternate;
+            }
+        }
+
+        @keyframes breathe-mobile {
+            0% { background: #0a0908; }
+            100% { background: #2a2520; }
+        }
+
+        @keyframes glow-mobile {
+            0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.7); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
         }
     </style>
 </head>
