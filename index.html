@@ -15,9 +15,9 @@
     <style>
         :root {
             --stone-dark: #0a0908;
-            --stone-mid: #1a1816;
-            --stone-light: #3d3632;
-            --stone-glow: #4a423a;
+            --stone-mid: #252220;
+            --stone-light: #4a4540;
+            --stone-glow: #6b6358;
             --text-color: #e6e1dc;
             --breath-duration: 8s;
             /* Rythme de respiration */
@@ -69,11 +69,12 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 60vmax;
-            height: 40vmax;
+            width: 100vmax;
+            height: 70vmax;
             background: radial-gradient(ellipse at center,
-                    rgba(74, 66, 58, 0.4) 0%,
-                    rgba(61, 54, 50, 0.2) 40%,
+                    rgba(120, 110, 95, 0.6) 0%,
+                    rgba(90, 82, 72, 0.4) 30%,
+                    rgba(60, 55, 48, 0.2) 50%,
                     transparent 70%);
             animation: pulse var(--breath-duration) ease-in-out infinite alternate;
             z-index: 0;
@@ -177,13 +178,13 @@
 
         @keyframes pulse {
             0% {
-                opacity: 0.3;
-                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0.5;
+                transform: translate(-50%, -50%) scale(0.85);
             }
 
             100% {
-                opacity: 0.8;
-                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.15);
             }
         }
 
