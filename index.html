@@ -14,18 +14,12 @@
 
     <style>
         :root {
-            --stone-dark: #0a0908;
-            --stone-mid: #252220;
-            --stone-light: #4a4540;
-            --stone-glow: #6b6358;
             --text-color: #e6e1dc;
             --breath-duration: 8s;
-            /* Rythme de respiration */
         }
 
         * {
             box-sizing: border-box;
-            /* Critical fix for height calculation */
         }
 
         html,
@@ -35,64 +29,46 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            /* Lock scroll */
             position: fixed;
-            /* Force lock on mobile */
-            background-color: var(--stone-dark);
+            background: #000;
             color: var(--text-color);
             font-family: "Playfair Display", "Didot", "Times New Roman", serif;
         }
 
-        /* Fond organique vivant */
-        .background {
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            /* Gradient enrichi pour profondeur - coeur lumineux */
-            background: radial-gradient(ellipse 80% 60% at center,
-                    var(--stone-glow) 0%,
-                    var(--stone-light) 20%,
-                    var(--stone-mid) 45%,
-                    var(--stone-dark) 70%,
-                    #000000 100%);
-            opacity: 1;
-            animation: breathe var(--breath-duration) ease-in-out infinite alternate;
-            z-index: 0;
-            will-change: transform, opacity;
-        }
-
-        /* Lueur centrale pulsante */
-        .glow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100vmax;
-            height: 70vmax;
-            background: radial-gradient(ellipse at center,
-                    rgba(120, 110, 95, 0.6) 0%,
-                    rgba(90, 82, 72, 0.4) 30%,
-                    rgba(60, 55, 48, 0.2) 50%,
-                    transparent 70%);
-            animation: pulse var(--breath-duration) ease-in-out infinite alternate;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        /* Grain de pierre (Texture) */
-        .noise {
-            position: absolute;
+        /* Fond qui respire - approche simple et robuste */
+        .breath {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            opacity: 0.05;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 1;
-            mix-blend-mode: overlay;
+            background: #1a1715;
+            animation: breathe var(--breath-duration) ease-in-out infinite alternate;
+        }
+
+        .breath::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150%;
+            height: 150%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle,
+                rgba(80, 70, 60, 0.8) 0%,
+                rgba(40, 35, 30, 0.5) 30%,
+                transparent 60%);
+            animation: glow var(--breath-duration) ease-in-out infinite alternate;
+        }
+
+        @keyframes breathe {
+            0% { background: #0d0c0b; }
+            100% { background: #1f1c1a; }
+        }
+
+        @keyframes glow {
+            0% { opacity: 0.4; transform: translate(-50%, -50%) scale(0.8); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
         }
 
         .container {
@@ -163,31 +139,6 @@
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
-        /* Animations */
-        @keyframes breathe {
-            0% {
-                transform: scale(1);
-                filter: brightness(0.8);
-            }
-
-            100% {
-                transform: scale(1.15);
-                filter: brightness(1.2);
-            }
-        }
-
-        @keyframes pulse {
-            0% {
-                opacity: 0.5;
-                transform: translate(-50%, -50%) scale(0.85);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1.15);
-            }
-        }
-
         @keyframes riseUp {
             to {
                 opacity: 1;
@@ -221,9 +172,7 @@
         <button class="lang-btn" data-lang="en" title="English">🇬🇧</button>
     </div>
 
-    <div class="background"></div>
-    <div class="glow"></div>
-    <div class="noise"></div>
+    <div class="breath"></div>
 
     <div class="container">
         <div id="racine">
@@ -232,34 +181,6 @@
     </div>
 
     <script>
-        const bg = document.querySelector('.background');
-        const text = document.getElementById('racine');
-
-        function handleMove(x, y) {
-            // Normalisation -0.5 à 0.5
-            const normX = (x / window.innerWidth) - 0.5;
-            const normY = (y / window.innerHeight) - 0.5;
-
-            // Le texte bouge (Parallax avant)
-            text.style.transform = `translate(${normX * -15}px, ${normY * -15}px)`;
-
-            // Le background bouge (Parallax arrière)
-            bg.style.marginLeft = `${normX * 30}px`;
-            bg.style.marginTop = `${normY * 30}px`;
-        }
-
-        // Souris
-        document.addEventListener('mousemove', (e) => {
-            handleMove(e.clientX, e.clientY);
-        });
-
-        // Touch (Mobile)
-        document.addEventListener('touchmove', (e) => {
-            e.preventDefault(); // Prevent scroll strictly
-            const touch = e.touches[0];
-            handleMove(touch.clientX, touch.clientY);
-        }, { passive: false }); // Passive false required for preventDefault
-
         // --- i18n ---
         const translations = {
             fr: { "quote": "Toute lumière prend racine dans la pierre." },
