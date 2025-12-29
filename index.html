@@ -162,6 +162,23 @@
                 transform: translateY(0);
             }
         }
+
+        /* Mobile : plus de respiration */
+        @media (max-width: 600px) {
+            .container {
+                justify-content: center;
+                padding-bottom: 0;
+            }
+
+            #racine {
+                padding: 0 2rem;
+            }
+
+            p {
+                font-size: clamp(1.2rem, 5vw, 1.6rem);
+                line-height: 1.7;
+            }
+        }
     </style>
 </head>
 
