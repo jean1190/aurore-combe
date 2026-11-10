@@ -1,406 +1,272 @@
 <!DOCTYPE html>
 <html lang="fr">
-<!-- cette lumière continue : jean-emmanuel-combe.fr -->
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aurore Combe</title>
-    <meta name="description" content="Toute lumière prend racine dans la pierre.">
-    <meta name="theme-color" content="#0d0c0b">
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230d0c0b'/%3E%3Ccircle cx='16' cy='15' r='7' fill='%23e8cc96' opacity='.35'/%3E%3Ccircle cx='16' cy='15' r='2.4' fill='%23f3e3c2'/%3E%3Cpath d='M16 18v11M16 24l-5 5M16 22l5 7' stroke='%23c9a45c' stroke-width='1'/%3E%3Cpath d='M0 31L9 26' stroke='%23d9b56f' stroke-width='1.4'/%3E%3C/svg%3E">
-
+    <meta name="description" content="Toute lumière prend racine dans la pierre. — All light takes root in stone.">
+    <meta name="author" content="Aurore Combe">
+    <link rel="canonical" href="https://aurore-combe.fr/">
+    <link rel="alternate" type="text/plain" href="/llms.txt" title="Aurore Combe — llms.txt">
+    <link rel="me" href="https://hunkaar.fr">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
-        rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@200;300&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --text-color: #e6e1dc;
-            --breath-duration: 8s;
-            --rise: -1;
-        }
-
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
 
-        html,
-        body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
+        html, body {
             height: 100%;
             overflow: hidden;
-            position: fixed;
-            background: #000;
-            color: var(--text-color);
-            font-family: "Playfair Display", "Didot", "Times New Roman", serif;
         }
 
-        .breath {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #1a1715;
-            animation: breathe var(--breath-duration) ease-in-out infinite alternate;
+        body {
+            background: #f5f2ed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            color: #262320;
         }
 
-        .breath::after {
+        body::before {
             content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 150%;
-            height: 150%;
-            transform: translate(-50%, -50%);
-            background: radial-gradient(circle,
-                rgba(80, 70, 60, 0.8) 0%,
-                rgba(40, 35, 30, 0.5) 30%,
-                transparent 60%);
-            animation: glow var(--breath-duration) ease-in-out infinite alternate;
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 30% 40%, rgba(215, 195, 165, 0.35) 0%, transparent 55%),
+                radial-gradient(ellipse at 70% 60%, rgba(190, 175, 155, 0.25) 0%, transparent 55%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 252, 245, 0.5) 0%, transparent 70%);
+            animation: breathe 14s ease-in-out infinite alternate;
+            pointer-events: none;
         }
 
         @keyframes breathe {
-            0% { background: #0d0c0b; }
-            100% { background: #1f1c1a; }
+            0% { opacity: 0.6; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.06); }
         }
 
-        @keyframes glow {
-            0% { opacity: 0.4; transform: translate(-50%, -50%) scale(0.8); }
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
-        }
-
-        /* La pierre : un grain à peine perceptible */
-        .pierre {
+        canvas {
             position: fixed;
             inset: 0;
             pointer-events: none;
-            opacity: 0.07;
-            mix-blend-mode: overlay;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+            z-index: 0;
         }
 
-        /* Les racines, tenues dans la pierre */
-        .racines,
-        .racines-lumiere {
-            position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: 38vh;
-            height: 38dvh;
-            pointer-events: none;
-            background: url('racines.webp') center bottom / cover no-repeat;
-            mix-blend-mode: screen;
-        }
-
-        .racines {
-            opacity: 0.07;
-        }
-
-        .racines-lumiere {
-            opacity: 0.38;
-            -webkit-mask-image: linear-gradient(to top,
-                transparent calc(var(--rise) * 100% - 38%),
-                #000 calc(var(--rise) * 100% - 6%),
-                transparent calc(var(--rise) * 100% + 4%));
-            mask-image: linear-gradient(to top,
-                transparent calc(var(--rise) * 100% - 38%),
-                #000 calc(var(--rise) * 100% - 6%),
-                transparent calc(var(--rise) * 100% + 4%));
-        }
-
-        /* L'aube, quand elle vient vraiment */
-        .aube {
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            background: radial-gradient(ellipse at 50% 78%, rgba(196, 128, 104, 0.9) 0%, rgba(120, 72, 64, 0) 62%);
-            mix-blend-mode: soft-light;
-            opacity: 0;
-        }
-
-        /* Le bout d'un fil venu d'ailleurs */
-        .fil {
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 86px;
-            height: 36px;
-            pointer-events: none;
-            opacity: 0.2;
-        }
-
-        .passage {
-            position: fixed;
-            left: 18px;
-            bottom: 4px;
-            width: 44px;
-            height: 44px;
-            z-index: 50;
-            border-radius: 50%;
-            outline: none;
-        }
-
-        .passage:hover,
-        .passage:focus-visible {
-            box-shadow: 0 0 0 1px rgba(201, 164, 92, 0.6);
-        }
-
-        .container {
+        main.center {
             position: relative;
-            height: 100vh;
-            height: 100dvh;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: center;
-            padding-bottom: 12vh;
-            z-index: 2;
-        }
-
-        #racine {
+            z-index: 1;
             text-align: center;
-            opacity: 0;
-            transform: translateY(30px);
-            animation: riseUp 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s forwards;
-            padding: 0 20px;
+            padding: 2rem 2.5rem;
+            max-width: 780px;
         }
 
-        p {
-            font-size: clamp(1.4rem, 0.9rem + 1.5vw, 3.2rem);
-            font-weight: 400;
+        .line {
+            width: 1px;
+            height: 0;
+            background: linear-gradient(to bottom, transparent, rgba(120, 100, 80, 0.35), transparent);
+            margin: 0 auto 3rem;
+            animation: growLine 2.8s cubic-bezier(0.22, 1, 0.36, 1) 0.4s forwards;
+        }
+
+        @keyframes growLine {
+            to { height: 65px; }
+        }
+
+        blockquote {
+            font-size: clamp(1.65rem, 4.2vw, 2.9rem);
+            font-weight: 300;
             font-style: italic;
-            letter-spacing: 0.03em;
-            line-height: 1.5;
-            margin: 0;
-            color: var(--text-color);
-            background: linear-gradient(to bottom, #ffffff 10%, #8a8885 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            line-height: 1.55;
+            letter-spacing: 0.025em;
+            color: #262320;
+            opacity: 0;
+            transform: translateY(16px);
+            animation: fadeUp 2.6s cubic-bezier(0.22, 1, 0.36, 1) 1.2s forwards;
+        }
+
+        blockquote.switching {
+            transition: opacity 0.45s ease, transform 0.45s ease;
+        }
+
+        .dot {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: rgba(120, 100, 80, 0.4);
+            margin: 3rem auto 0;
+            opacity: 0;
+            animation: fadeIn 2s ease 2.8s forwards;
+        }
+
+        .thread {
+            position: fixed;
+            bottom: 1.8rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 200;
+            font-size: 0.68rem;
+            letter-spacing: 0.2em;
+            opacity: 0;
+            animation: fadeIn 2.2s ease 3.2s forwards;
+        }
+
+        .thread a {
+            color: rgba(110, 92, 72, 0.42);
+            text-decoration: none;
+            transition: color 0.35s ease;
+        }
+
+        .thread a:hover {
+            color: rgba(38, 35, 32, 0.82);
         }
 
         .lang-toggle {
             position: fixed;
-            top: clamp(0.6rem, 1.2vw, 1.6rem);
-            right: clamp(0.6rem, 1.2vw, 1.6rem);
+            top: 2rem;
+            right: 2.2rem;
+            z-index: 2;
             display: flex;
-            gap: 0.1rem;
-            z-index: 100;
-            font-size: clamp(0.85rem, 0.65rem + 0.25vw, 1.08rem);
-            font-style: italic;
-            letter-spacing: 0.08em;
-            color: #cfc8bf;
+            align-items: center;
+            gap: 0.35rem;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 200;
+            font-size: 0.68rem;
+            letter-spacing: 0.16em;
+            color: rgba(110, 92, 72, 0.35);
+            opacity: 0;
+            animation: fadeIn 2s ease 3s forwards;
+            user-select: none;
         }
 
-        .lang-btn {
+        .lang-toggle button {
             background: none;
             border: none;
-            cursor: pointer;
-            opacity: 0.5;
-            transition: opacity 0.3s ease;
+            color: rgba(110, 92, 72, 0.44);
             font: inherit;
-            color: inherit;
-            padding: 0.5rem;
-            min-width: 2.2rem;
-            min-height: 2.2rem;
+            letter-spacing: inherit;
+            padding: 0.2rem 0.3rem;
+            cursor: pointer;
+            transition: color 0.35s ease;
         }
 
-        .lang-btn:hover {
-            opacity: 0.8;
+        .lang-toggle button:hover {
+            color: rgba(38, 35, 32, 0.8);
         }
 
-        .lang-btn:focus-visible {
-            outline: 1px solid rgba(201, 164, 92, 0.8);
-            outline-offset: 2px;
+        .lang-toggle button.active {
+            color: rgba(38, 35, 32, 0.92);
         }
 
-        .lang-btn.active {
-            opacity: 1;
-        }
-
-        @keyframes riseUp {
+        @keyframes fadeUp {
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        @media (max-width: 600px) {
-            .container {
-                padding-bottom: 17vh;
-                padding-bottom: 17dvh;
-            }
-
-            #racine {
-                padding: 0 2rem;
-            }
-
-            p {
-                font-size: clamp(1.2rem, 5vw, 1.6rem);
-                line-height: 1.7;
-                background: linear-gradient(to bottom, #ffffff 0%, #c9c6c0 100%);
-                -webkit-background-clip: text;
-                background-clip: text;
-            }
-
-            .breath {
-                animation-name: breathe-mobile;
-            }
-
-            .breath::after {
-                background: radial-gradient(circle,
-                    rgba(130, 115, 95, 0.9) 0%,
-                    rgba(80, 70, 55, 0.6) 35%,
-                    transparent 65%);
-                animation-name: glow-mobile;
-            }
-
-            .racines {
-                opacity: 0.12;
-            }
-
-            .racines,
-            .racines-lumiere {
-                height: 30vh;
-                height: 30dvh;
-            }
-        }
-
-        @keyframes breathe-mobile {
-            0% { background: #0a0908; }
-            100% { background: #2a2520; }
-        }
-
-        @keyframes glow-mobile {
-            0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.7); }
-            100% { opacity: 1; transform: translate(-50%, -50%) scale(1.3); }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .breath,
-            .breath::after {
-                animation-play-state: paused;
-            }
+        @keyframes fadeIn {
+            to { opacity: 1; }
         }
     </style>
 </head>
-
 <body>
+    <canvas id="c" aria-hidden="true"></canvas>
 
-    <div class="lang-toggle">
-        <button class="lang-btn active" data-lang="fr" title="Français">fr</button>
-        <button class="lang-btn" data-lang="en" title="English">en</button>
-    </div>
+    <main class="center">
+        <div class="line" aria-hidden="true"></div>
+        <blockquote id="quote">Toute lumière prend racine dans la pierre.</blockquote>
+        <div class="dot" aria-hidden="true"></div>
+        <p class="thread"><a href="https://hunkaar.fr" rel="me">↔ hunkaar.fr</a></p>
+    </main>
 
-    <div class="breath"></div>
-    <div class="pierre" aria-hidden="true"></div>
-    <div class="racines" aria-hidden="true"></div>
-    <div class="racines-lumiere" aria-hidden="true"></div>
-    <div class="aube" aria-hidden="true"></div>
-    <svg class="fil" viewBox="0 0 86 36" aria-hidden="true">
-        <line x1="0" y1="36" x2="86" y2="1.5" stroke="#d9b56f" stroke-width="1" stroke-linecap="round" />
-    </svg>
-    <a class="passage" href="https://jean-emmanuel-combe.fr" aria-label="Jean-Emmanuel Combe" title="Jean-Emmanuel Combe"></a>
-
-    <div class="container">
-        <div id="racine">
-            <p data-i18n="quote">Toute lumière prend racine dans la&nbsp;pierre.</p>
-        </div>
-    </div>
+    <nav class="lang-toggle" aria-label="Langue" aria-hidden="true">
+        <button type="button" id="btn-fr" class="active" onclick="setLang('fr')">fr</button>
+        <span>·</span>
+        <button type="button" id="btn-en" onclick="setLang('en')">en</button>
+    </nav>
 
     <script>
-        // --- i18n ---
-        const translations = {
-            fr: { "quote": "Toute lumière prend racine dans la&nbsp;pierre." },
-            en: { "quote": "All light takes root in&nbsp;stone." }
+        const texts = {
+            fr: "Toute lumi\u00e8re prend racine dans la pierre.",
+            en: "All light takes root in stone."
         };
+        let current = 'fr';
+        const quote = document.getElementById('quote');
+        const btnFr = document.getElementById('btn-fr');
+        const btnEn = document.getElementById('btn-en');
 
-        let currentLang = localStorage.getItem('lang') || 'fr';
-
-        function setLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('lang', lang);
+        function setLang(lang) {
+            if (lang === current) return;
+            current = lang;
             document.documentElement.lang = lang;
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === lang);
-            });
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.dataset.i18n;
-                if (translations[lang] && translations[lang][key]) {
-                    el.innerHTML = translations[lang][key];
-                }
-            });
-        }
-        setLanguage(currentLang);
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
-        });
 
-        // --- La pierre vivante ---
-        // Both pages read the same wall clock: the breath (16 s) and the light's
-        // journey (48 s) are shared with jean-emmanuel-combe.fr, phase for phase.
-        const BREATH_MS = 16000;
-        const CYCLE_MS = 48000;
-        const ROOTS = { start: 0, end: 9000 };
-        const FLARE = { peak: 9000, width: 2200 };
-        const DEPARTURE = { peak: 10000, width: 700 };
+            btnFr.classList.toggle('active', lang === 'fr');
+            btnEn.classList.toggle('active', lang === 'en');
 
-        const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const root = document.documentElement;
-        const breath = document.querySelector('.breath');
-        const text = document.getElementById('racine');
-        const aube = document.querySelector('.aube');
-        const fil = document.querySelector('.fil');
+            quote.classList.add('switching');
+            quote.style.opacity = '0';
+            quote.style.transform = 'translateY(8px)';
 
-        // Lock the CSS breath to the shared clock: 8 s alternate is a 16 s cycle.
-        const delay = -((Date.now() % BREATH_MS) / 1000) + 's';
-        breath.style.animationDelay = delay;
-        const lock = document.createElement('style');
-        lock.textContent = `.breath::after { animation-delay: ${delay}; }`;
-        document.head.appendChild(lock);
-
-        function smooth(x) {
-            x = Math.min(1, Math.max(0, x));
-            return x * x * (3 - 2 * x);
+            setTimeout(() => {
+                quote.textContent = texts[lang];
+                quote.style.opacity = '1';
+                quote.style.transform = 'translateY(0)';
+            }, 400);
         }
 
-        function bell(t, peak, width) {
-            return Math.exp(-(((t - peak) / width) ** 2));
+        const canvas = document.getElementById('c');
+        const ctx = canvas.getContext('2d');
+        let w, h, particles;
+
+        function resize() {
+            w = canvas.width = window.innerWidth;
+            h = canvas.height = window.innerHeight;
         }
 
-        // Dawn, by the visitor's own clock: strongest around half past six.
-        function dawnWeight(date) {
-            const h = date.getHours() + date.getMinutes() / 60;
-            return Math.exp(-(((h - 6.5) / 1.3) ** 2));
+        function init() {
+            resize();
+            const count = Math.floor((w * h) / 28000);
+            particles = Array.from({ length: count }, () => ({
+                x: Math.random() * w,
+                y: Math.random() * h,
+                r: Math.random() * 1.1 + 0.3,
+                dx: (Math.random() - 0.5) * 0.12,
+                dy: (Math.random() - 0.5) * 0.12,
+                alpha: Math.random() * 0.2 + 0.06,
+                phase: Math.random() * Math.PI * 2
+            }));
         }
 
-        function frame() {
-            const now = Date.now();
-            const phase = now % CYCLE_MS;
+        function draw(t) {
+            ctx.clearRect(0, 0, w, h);
+            for (const p of particles) {
+                p.x += p.dx;
+                p.y += p.dy;
+                if (p.x < 0) p.x = w;
+                if (p.x > w) p.x = 0;
+                if (p.y < 0) p.y = h;
+                if (p.y > h) p.y = 0;
 
-            const r = (phase - ROOTS.start) / (ROOTS.end - ROOTS.start);
-            root.style.setProperty('--rise', (r >= 0 && r <= 1.3 ? smooth(r / 1.3) * 1.3 : -1).toFixed(4));
-
-            const flare = bell(phase, FLARE.peak, FLARE.width);
-            text.style.filter = flare > 0.01 ? `brightness(${(1 + 0.16 * flare).toFixed(3)})` : '';
-
-            fil.style.opacity = (0.2 + 0.7 * bell(phase, DEPARTURE.peak, DEPARTURE.width)).toFixed(3);
-            aube.style.opacity = (0.32 * dawnWeight(new Date(now))).toFixed(3);
-
-            requestAnimationFrame(frame);
+                const flicker = p.alpha + Math.sin(t * 0.0008 + p.phase) * 0.04;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(130, 110, 88, ${Math.max(0.03, flicker)})`;
+                ctx.fill();
+            }
+            requestAnimationFrame(draw);
         }
 
-        if (!still) requestAnimationFrame(frame);
-        else aube.style.opacity = (0.32 * dawnWeight(new Date())).toFixed(3);
+        window.addEventListener('resize', resize);
+        init();
+        requestAnimationFrame(draw);
     </script>
-
 </body>
-
 </html>
