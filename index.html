@@ -182,8 +182,8 @@
         #racine {
             text-align: center;
             opacity: 0;
-            transform: translateY(16px);
-            animation: riseUp 1.0s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s forwards;
+            transform: translateY(30px);
+            animation: riseUp 2.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s forwards;
             padding: 0 20px;
         }
 
@@ -196,14 +196,20 @@
             font-size: clamp(0.72rem, 0.6rem + 0.2vw, 0.86rem);
             font-style: normal;
             letter-spacing: 0.14em;
-            color: rgba(207, 200, 191, 0.48);
+            color: rgba(207, 200, 191, 0.54);
             text-decoration: none;
             transition: color 0.3s ease;
         }
 
         .cercle:hover,
         .cercle:focus-visible {
-            color: rgba(230, 225, 220, 0.88);
+            color: rgba(235, 230, 224, 0.92);
+        }
+
+        .cercle:focus-visible {
+            outline: 1px solid rgba(201, 164, 92, 0.65);
+            outline-offset: 4px;
+            border-radius: 2px;
         }
 
         p {
@@ -226,12 +232,19 @@
             top: clamp(0.6rem, 1.2vw, 1.6rem);
             right: clamp(0.6rem, 1.2vw, 1.6rem);
             display: flex;
-            gap: 0.1rem;
+            align-items: center;
+            gap: 0.05rem;
             z-index: 100;
             font-size: clamp(0.85rem, 0.65rem + 0.25vw, 1.08rem);
             font-style: italic;
             letter-spacing: 0.08em;
             color: #cfc8bf;
+        }
+
+        .lang-sep {
+            opacity: 0.35;
+            user-select: none;
+            pointer-events: none;
         }
 
         .lang-btn {
@@ -319,9 +332,21 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .breath,
+            .breath {
+                animation: none;
+                background: #161412;
+            }
+
             .breath::after {
-                animation-play-state: paused;
+                animation: none;
+                opacity: 0.72;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            #racine {
+                animation: none;
+                opacity: 1;
+                transform: none;
             }
         }
     </style>
@@ -329,10 +354,11 @@
 
 <body>
 
-    <div class="lang-toggle" aria-hidden="true">
-        <button class="lang-btn active" data-lang="fr" title="Français">fr</button>
-        <button class="lang-btn" data-lang="en" title="English">en</button>
-    </div>
+    <nav class="lang-toggle" aria-label="Langue">
+        <button type="button" class="lang-btn active" data-lang="fr" lang="fr" aria-pressed="true" title="Français">fr</button>
+        <span class="lang-sep" aria-hidden="true">·</span>
+        <button type="button" class="lang-btn" data-lang="en" lang="en" aria-pressed="false" title="English">en</button>
+    </nav>
 
     <div class="breath" aria-hidden="true"></div>
     <div class="pierre" aria-hidden="true"></div>
@@ -348,7 +374,7 @@
         <div id="racine">
             <p data-i18n="quote">Toute lumière prend racine dans la&nbsp;pierre.</p>
         </div>
-        <div style="margin:0"><a class="cercle" href="https://hunkaar.fr" rel="me">↔ hunkaar.fr</a></div>
+        <a class="cercle" href="https://hunkaar.fr" rel="me">↔ hunkaar.fr</a>
     </main>
 
     <script>
@@ -365,7 +391,9 @@
             localStorage.setItem('lang', lang);
             document.documentElement.lang = lang;
             document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.lang === lang);
+                const active = btn.dataset.lang === lang;
+                btn.classList.toggle('active', active);
+                btn.setAttribute('aria-pressed', String(active));
             });
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.dataset.i18n;
@@ -417,24 +445,39 @@
             return Math.exp(-(((h - 6.5) / 1.3) ** 2));
         }
 
+        let lastRise = '', lastFilter = '', lastFil = '', lastAube = '', lastMinuteCheck = -1;
+
         function frame() {
             const now = Date.now();
             const phase = now % CYCLE_MS;
 
             const r = (phase - ROOTS.start) / (ROOTS.end - ROOTS.start);
-            root.style.setProperty('--rise', (r >= 0 && r <= 1.3 ? smooth(r / 1.3) * 1.3 : -1).toFixed(4));
+            const nextRise = (r >= 0 && r <= 1.3 ? smooth(r / 1.3) * 1.3 : -1).toFixed(4);
+            if (nextRise !== lastRise) { root.style.setProperty('--rise', nextRise); lastRise = nextRise; }
 
             const flare = bell(phase, FLARE.peak, FLARE.width);
-            text.style.filter = flare > 0.01 ? `brightness(${(1 + 0.16 * flare).toFixed(3)})` : '';
+            const nextFilter = flare > 0.01 ? `brightness(${(1 + 0.16 * flare).toFixed(3)})` : '';
+            if (nextFilter !== lastFilter) { text.style.filter = nextFilter; lastFilter = nextFilter; }
 
-            fil.style.opacity = (0.2 + 0.7 * bell(phase, DEPARTURE.peak, DEPARTURE.width)).toFixed(3);
-            aube.style.opacity = (0.32 * dawnWeight(new Date(now))).toFixed(3);
+            const nextFil = (0.2 + 0.7 * bell(phase, DEPARTURE.peak, DEPARTURE.width)).toFixed(3);
+            if (nextFil !== lastFil) { fil.style.opacity = nextFil; lastFil = nextFil; }
+
+            if (now - lastMinuteCheck > 1000) {
+                lastMinuteCheck = now;
+                const nextAube = (0.32 * dawnWeight(new Date(now))).toFixed(3);
+                if (nextAube !== lastAube) { aube.style.opacity = nextAube; lastAube = nextAube; }
+            }
 
             requestAnimationFrame(frame);
         }
 
-        if (!still) requestAnimationFrame(frame);
-        else aube.style.opacity = (0.32 * dawnWeight(new Date())).toFixed(3);
+        if (!still) {
+            requestAnimationFrame(frame);
+        } else {
+            root.style.setProperty('--rise', '0.6200');
+            fil.style.opacity = '0.320';
+            aube.style.opacity = (0.32 * dawnWeight(new Date())).toFixed(3);
+        }
     </script>
 
 </body>
