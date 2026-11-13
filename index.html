@@ -21,7 +21,8 @@
       "sameAs": [
         "https://hunkaar.fr",
         "https://le-dioptre.fr",
-        "https://sumu.le-dioptre.fr"
+        "https://sumu.le-dioptre.fr",
+        "https://jean-emmanuel-combe.fr"
       ]
     }
     </script>
@@ -175,7 +176,7 @@
             flex-direction: column;
             justify-content: flex-end;
             align-items: center;
-            padding-bottom: 12vh;
+            padding-bottom: clamp(7rem, 15vh, 9.5rem);
             z-index: 2;
         }
 
@@ -189,24 +190,39 @@
 
         .cercle {
             position: fixed;
-            bottom: clamp(1rem, 2.2vh, 1.8rem);
+            bottom: clamp(2.1rem, 3.4vh, 2.8rem);
             left: 50%;
             transform: translateX(-50%);
+            width: min(46rem, calc(100vw - 6rem));
             z-index: 40;
-            font-size: clamp(0.72rem, 0.6rem + 0.2vw, 0.86rem);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.25rem 0.75rem;
+            font-size: clamp(0.62rem, 0.55rem + 0.18vw, 0.78rem);
             font-style: normal;
-            letter-spacing: 0.14em;
-            color: rgba(207, 200, 191, 0.54);
+            letter-spacing: 0.11em;
+            line-height: 1.45;
+            text-align: center;
+            color: rgba(207, 200, 191, 0.62);
+        }
+
+        .cercle a {
+            color: inherit;
             text-decoration: none;
             transition: color 0.3s ease;
         }
 
-        .cercle:hover,
-        .cercle:focus-visible {
+        .cercle a.here {
             color: rgba(235, 230, 224, 0.92);
         }
 
-        .cercle:focus-visible {
+        .cercle a:hover,
+        .cercle a:focus-visible {
+            color: rgba(235, 230, 224, 0.96);
+        }
+
+        .cercle a:focus-visible {
             outline: 1px solid rgba(201, 164, 92, 0.65);
             outline-offset: 4px;
             border-radius: 2px;
@@ -374,8 +390,15 @@
         <div id="racine">
             <p data-i18n="quote">Toute lumière prend racine dans la&nbsp;pierre.</p>
         </div>
-        <a class="cercle" href="https://hunkaar.fr" rel="me">↔ hunkaar.fr</a>
     </main>
+
+    <footer class="cercle" aria-label="Le cercle">
+        <a href="https://hunkaar.fr/" rel="me">hunkaar.fr</a>
+        <a href="https://le-dioptre.fr/">le-dioptre.fr</a>
+        <a href="https://sumu.le-dioptre.fr/">sumu.le-dioptre.fr</a>
+        <a href="https://jean-emmanuel-combe.fr/" rel="me">jean-emmanuel-combe.fr</a>
+        <a class="here" href="https://aurore-combe.fr/" aria-current="page">aurore-combe.fr</a>
+    </footer>
 
     <script>
         // --- i18n ---
